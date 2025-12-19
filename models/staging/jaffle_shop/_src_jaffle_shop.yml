@@ -10,13 +10,13 @@ sources:
         error_after: 
           count: 30
           period: day
-    loaded_at_field: _etl_loaded_at
+      loaded_at_field: _etl_loaded_at
     tables:
       - name: customers
-        freshness: null
+        config:
+          freshness: null
       - name: orders
         
-
   - name: stripe
     database: raw
     schema: stripe
