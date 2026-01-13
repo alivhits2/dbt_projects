@@ -1,0 +1,10 @@
+macros:
+  - name: cents_to_dollard
+    description: Some description here
+    arguments:
+      - name: column_name
+        type: string
+        description: Name of the column to convert
+      - name: decimal_places
+        type: integer
+        description: Number of decimal places to round to
