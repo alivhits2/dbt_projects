@@ -32,8 +32,3 @@ sources:
               - unique
               - not_null
         
-  - name: stripe
-    database: raw
-    schema: stripe
-    tables:
-      - name: payment
