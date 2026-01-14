@@ -1,10 +1,12 @@
-with raw_customers as (
+with source as (
     select * from {{ source('jaffle_shop', 'customers') }}
 ),
 transformed as (
     select
         id as customer_id,
         first_name,
-        last_name
+        last_name,
+        first_name || '' || last_name as full_name
+    from source
 )
-from * from transformed
+select * from transformed

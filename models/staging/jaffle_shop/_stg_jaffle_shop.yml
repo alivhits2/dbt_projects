@@ -13,6 +13,7 @@ models:
       - name: last_name
         data_tests:
           - not_null
+      - name: full_name
 
   - name: stg_jaffle_shop__orders
     description: One order per row
@@ -38,3 +39,5 @@ models:
           - relationships:
               field: customer_id
               to: ref('stg_jaffle_shop__customers')
+      - name: valid_order_date
+        description: Null if status is invalid

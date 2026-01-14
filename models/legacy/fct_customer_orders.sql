@@ -32,16 +32,6 @@
         left join order_pyments on orders.order_id = order_pyments.order_id
         left join customers on orders.customer_id = customers.customer_id 
     ),
-    lifetime_totals as (
-        select
-            order_id,
-            sum (total_amount_paid) over (
-                    partition by customer_id 
-                    order by order_id 
-                    range between unbounded preceding and current row
-                ) as clv_bad
-        from paid_orders
-    ),
     -- final cte
     final as (
         select
@@ -53,10 +43,13 @@
                 then 'new' 
                 else 'return' 
             end as nvsr,
-            lifetime_totals.clv_bad as customer_lifetime_value,
+            sum (total_amount_paid) over (
+                    partition by paid_orders.customer_id 
+                    order by paid_orders.order_id 
+                    range between unbounded preceding and current row
+                ) as customer_lifetime_value_2,
             min(paid_orders.order_placed_at) over (partition by paid_orders.customer_id) as fdos
             from paid_orders
-            left outer join lifetime_totals on lifetime_totals.order_id = paid_orders.order_id
             order by order_id
     )
 -- simple select statement
