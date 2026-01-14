@@ -2,35 +2,35 @@
  with 
     -- import ctes
     orders as ( 
-        select * from {{ source('jaffle_shop', 'orders') }}
+        select * from {{ ref("stg_jaffle_shop__orders") }}
     ),
     customers as (
-        select * from {{ source('jaffle_shop', 'customers') }}
+        select * from {{ ref("stg_jaffle_shop__customers") }}
     ),
     payments as (
-        select * from {{ source('stripe', 'payment') }}
+        select * from {{ ref("stg_stripe__payments") }}
     ),
     -- logical ctes
     order_pyments as (
-        select orderid as order_id, 
-            max(created) as payment_finalized_date, 
-            sum(amount) / 100.0 as total_amount_paid
+        select order_id, 
+            max(created_at) as payment_finalized_date, 
+            sum(amount) as total_amount_paid
         from payments
         where status <> 'fail'
         group by 1
     ),
     paid_orders as (
-        select orders.id as order_id,
-            orders.user_id as customer_id,
+        select orders.order_id,
+            orders.customer_id,
             orders.order_date as order_placed_at,
-            orders.status as order_status,
+            orders.order_status,
             order_pyments.total_amount_paid,
             order_pyments.payment_finalized_date,
             customers.first_name as customer_first_name,
             customers.last_name as customer_last_name
         from orders
-        left join order_pyments on orders.id = order_pyments.order_id
-        left join customers on orders.user_id = customers.id 
+        left join order_pyments on orders.order_id = order_pyments.order_id
+        left join customers on orders.customer_id = customers.customer_id 
     ),
     lifetime_totals as (
         select
