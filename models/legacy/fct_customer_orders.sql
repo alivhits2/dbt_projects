@@ -8,7 +8,7 @@
         select * from {{ ref("int_orders") }}
     ),
     -- final cte
-    final as (
+    orders_cistomers as (
         select
             orders.*,
             customers.first_name as customer_first_name,
@@ -28,7 +28,12 @@
             min(orders.order_placed_at) over (partition by orders.customer_id) as fdos
             from orders
             left join customers on orders.customer_id = customers.customer_id 
-            order by order_id
+    ),
+    final as (
+        select orders_cistomers.*,
+        round({{ function('safe_divide') }}(total_amount_paid, customer_lifetime_value), 2) as percent_of_lifetime
+        from orders_cistomers 
+        order by order_id
     )
 -- simple select statement
 select * from final

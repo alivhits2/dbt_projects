@@ -1,0 +1,10 @@
+functions:
+  - name: safe_divide
+    description: safely fivide without dividing by 0
+    arguments:
+      - name: numerator
+        data_type: number
+      - name: denominator
+        data_type: number
+    returns:      
+      data_type: number
